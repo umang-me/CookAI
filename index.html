@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RecipeAI — Instant Recipe Generator</title>
+  <link rel="icon" href="images/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- ══════════════════════════════════
+       HEADER
+  ══════════════════════════════════ -->
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">🍳</div>
+        <span class="brand-name">Recipe<span>AI</span></span>
+      </div>
+      <!-- Theme toggle: saves preference to localStorage -->
+      <button id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle theme">🌙</button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════ -->
+  <main>
+    <div class="container">
+
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-tag">✦ AI Powered</div>
+        <h1>Turn ingredients into<br><em>amazing recipes</em></h1>
+        <p>Type what you have in your kitchen and get a full, detailed recipe instantly.</p>
+      </section>
+
+      <!-- Input card -->
+      <div class="input-card">
+        <div class="input-wrapper">
+          <label class="input-label" for="ingredientInput">Your Ingredients</label>
+          <textarea
+            id="ingredientInput"
+            class="ingredient-input"
+            placeholder="e.g. chicken, rice, garlic, tomato, lemon…"
+            rows="2"
+            aria-label="Enter ingredients"
+          ></textarea>
+          <!-- Clear button inside the input -->
+          <button id="clearBtn" aria-label="Clear input" title="Clear">✕</button>
+        </div>
+
+        <!-- Validation message -->
+        <div class="validation-msg" id="validationMsg" role="alert">
+          ⚠️ Please enter at least one ingredient before generating a recipe.
+        </div>
+
+        <!-- Action buttons -->
+        <div class="btn-row">
+          <button class="btn btn-primary" id="generateBtn">
+            <span>✨</span> Generate Recipe
+          </button>
+          <button class="btn btn-secondary" id="randomBtn">
+            🎲 Random Recipe
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div class="loading-state" id="loadingState" aria-live="polite">
+        <div class="spinner"></div>
+        <div class="loading-text">
+          Crafting your recipe<span class="loading-dots">
+            <span>.</span><span>.</span><span>.</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div class="error-state" id="errorState" role="alert">
+        <div class="error-icon">⚠️</div>
+        <div class="error-title">Something went wrong</div>
+        <div class="error-msg" id="errorMsg">Could not generate recipe. Please try again.</div>
+      </div>
+
+      <!-- Placeholder (shown before first search) -->
+      <div class="placeholder-state" id="placeholderState">
+        <p class="placeholder-hint">Or try one of these quick ideas ↓</p>
+        <div class="placeholder-grid">
+          <div class="placeholder-chip" data-ingredients="pasta, tomato, garlic, basil, olive oil">
+            <span class="chip-emoji">🍝</span>Italian Pasta
+          </div>
+          <div class="placeholder-chip" data-ingredients="chicken, ginger, soy sauce, garlic, sesame">
+            <span class="chip-emoji">🍗</span>Asian Chicken
+          </div>
+          <div class="placeholder-chip" data-ingredients="eggs, cheese, ham, bell pepper, onion">
+            <span class="chip-emoji">🍳</span>Omelette
+          </div>
+          <div class="placeholder-chip" data-ingredients="salmon, lemon, dill, butter, capers">
+            <span class="chip-emoji">🐟</span>Baked Salmon
+          </div>
+          <div class="placeholder-chip" data-ingredients="chickpeas, tomato, spinach, cumin, coriander">
+            <span class="chip-emoji">🫘</span>Vegan Curry
+          </div>
+          <div class="placeholder-chip" data-ingredients="banana, oats, honey, milk, cinnamon">
+            <span class="chip-emoji">🥣</span>Breakfast Bowl
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipe result -->
+      <div class="recipe-result" id="recipeResult">
+
+        <!-- Image banner -->
+        <div class="recipe-image-wrap" id="recipeImageWrap">
+          <div class="img-placeholder">🍽️</div>
+        </div>
+
+        <!-- Header -->
+        <div class="recipe-header">
+          <div class="recipe-badges" id="recipeBadges"></div>
+          <h2 class="recipe-title" id="recipeTitle"></h2>
+          <p class="recipe-desc" id="recipeDesc"></p>
+        </div>
+
+        <!-- Body: ingredients + steps -->
+        <div class="recipe-body">
+          <!-- Ingredients column -->
+          <div class="recipe-section">
+            <div class="section-heading">🥕 Ingredients</div>
+            <ul class="ingredients-list" id="ingredientsList"></ul>
+          </div>
+          <!-- Steps column -->
+          <div class="recipe-section">
+            <div class="section-heading">👨‍🍳 Instructions</div>
+            <ol class="steps-list" id="stepsList"></ol>
+          </div>
+        </div>
+
+        <!-- Chef's tip -->
+        <div class="chef-tip" id="chefTip" style="display:none">
+          <div class="chef-tip-icon">💡</div>
+          <div>
+            <div class="chef-tip-label">Chef's Tip</div>
+            <p class="chef-tip-text" id="chefTipText"></p>
+          </div>
+        </div>
+
+        <!-- Post-recipe actions -->
+        <div class="recipe-actions">
+          <button class="btn btn-secondary" id="newSearchBtn">← New Search</button>
+          <button class="btn btn-secondary" id="regenerateBtn">🔄 Try Again</button>
+        </div>
+      </div>
+
+    </div><!-- /container -->
+  </main>
+
+  <footer>
+    <p>RecipeAI · Powered by Claude &amp; Pollinations · Built with ❤️</p>
+  </footer>
+
+
+  <!-- ══════════════════════════════════
+       JAVASCRIPT — MODULAR & COMMENTED
+  ══════════════════════════════════ -->
+  <script src="script.js"></script>
+</body>
+</html>
