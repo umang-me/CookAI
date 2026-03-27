@@ -960,27 +960,18 @@ Respond ONLY with a raw JSON object — no markdown fences, no explanation. Use 
       }
 
       // Calls the Anthropic API
-      async function callAnthropicAPI(ingredients) {
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-          method : 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body   : JSON.stringify({
-            model      : 'claude-sonnet-4-20250514',
-            max_tokens : 1400,
-            messages   : [{ role: 'user', content: buildPrompt(ingredients) }]
-          })
-        });
+     async function callAnthropicAPI(ingredients) {
+  const prompt = `Create a recipe in JSON using: ${ingredients}.
+Return only JSON with title, ingredients, steps.`;
 
-        if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.error?.message || `API error ${response.status}`);
-        }
+  const url = `https://text.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
 
-        const data = await response.json();
-        const raw  = (data.content || []).map(b => b.text || '').join('');
-        const clean = raw.replace(/```json|```/gi, '').trim();
-        return JSON.parse(clean);
-      }
+  const res = await fetch(url);
+  const text = await res.text();
+
+  const clean = text.replace(/```json|```/gi, '').trim();
+  return JSON.parse(clean);
+}
 
       // Mock fallback data (used only if API fails)
       function mockRecipe(ingredients) {
